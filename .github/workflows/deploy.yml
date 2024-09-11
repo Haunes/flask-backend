@@ -24,13 +24,5 @@ jobs:
         chmod 600 /tmp/ec2_key.pem
         ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
 
-        # Copia los archivos al servidor EC2
-        scp -i /tmp/ec2_key.pem -r * $USER@$HOST:/home/ubuntu/myapp/
-
-        # Reiniciar la aplicación Flask
-        ssh -i /tmp/ec2_key.pem $USER@$HOST << EOF
-          cd /home/ubuntu/myapp
-          source venv/bin/activate
-          pip install -r requirements.txt  # Asegura que las dependencias estén instaladas
-          sudo systemctl restart flask-app  # Reinicia el servicio Flask (si lo configuraste con systemd)
-        EOF
+        # Aquí es donde se agrega la opción -v para aumentar la verbosidad
+        ssh -v -i /tmp/ec2_key.pem $USER@$HOST "echo 'SSH working!'"
