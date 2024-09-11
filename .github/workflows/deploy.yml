@@ -20,12 +20,9 @@ jobs:
 
       - name: Deploy to EC2 Instance
         env:
-          EC2_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SERVER_IP: ${{ secrets.SSH_HOST }}
-          EC2_USER: ${{ secrets.USER_NAME }}
-          APP_DIR: /home/ubuntu/aws-prueba
-          APP_FILE: app.py
-          ENVIRONMENT: production
+          EC2_PRIVATE_KEY: ${{ secrets.EC2_KEY }}
+          SERVER_IP: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
       
         run: |
           echo "$EC2_PRIVATE_KEY" > ec2_key && chmod 600 ec2_key
