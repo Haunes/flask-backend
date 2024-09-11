@@ -1,9 +1,9 @@
-name: Deploy Flask App to EC2
+name: Test SSH to EC2
 
 on:
   push:
     branches:
-      - master  # Ejecuta el workflow cuando hay un push a la rama master
+      - master
 
 jobs:
   deploy:
@@ -13,38 +13,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'  # Versión de Python
-
-    - name: Install dependencies
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-        pip install -r requirements.txt
-
     - name: Deploy to EC2
       env:
         HOST: ${{ secrets.EC2_HOST }}
         USER: ${{ secrets.EC2_USER }}
         KEY: ${{ secrets.EC2_KEY }}
       run: |
-        # Crear la carpeta .ssh si no existe
         mkdir -p ~/.ssh
-
-        # Guardar la clave en un archivo temporal
         echo "$KEY" > /tmp/ec2_key.pem
         chmod 600 /tmp/ec2_key.pem
-
-        # Añadir el host a known_hosts
         ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
-
-        # Crear el directorio en EC2 si no existe
-        ssh -i /tmp/ec2_key.pem $USER@$HOST "mkdir -p /home/ubuntu/myapp/"
-
-        # Usar el archivo temporal para la conexión y copiar archivos
-        scp -i /tmp/ec2_key.pem -r * $USER@$HOST:/home/ubuntu/myapp/
-
-        # Reiniciar la aplicación Flask en EC2
-        ssh -i /tmp/ec2_key.pem $USER@$HOST "sudo systemctl restart flask-app"
+        ssh -i /tmp/ec2_key.pem $USER@$HOST "echo 'SSH working!'"
