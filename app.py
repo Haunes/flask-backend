@@ -34,10 +34,5 @@ def list_users():
     users = cursor.fetchall()
     return jsonify(users)
 
-# Nueva ruta que responde con "Hola Mundo"
-@app.route('/hello', methods=['GET'])
-def hello_world():
-    return "Hola Mundo"
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
