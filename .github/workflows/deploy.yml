@@ -1,4 +1,4 @@
-name: Test SSH to EC2
+name: Deploy Flask App to EC2
 
 on:
   push:
@@ -23,4 +23,14 @@ jobs:
         echo "$KEY" > /tmp/ec2_key.pem
         chmod 600 /tmp/ec2_key.pem
         ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
-        ssh -i /tmp/ec2_key.pem $USER@$HOST "echo 'SSH working!'"
+
+        # Copia los archivos al servidor EC2
+        scp -i /tmp/ec2_key.pem -r * $USER@$HOST:/home/ubuntu/myapp/
+
+        # Reiniciar la aplicación Flask
+        ssh -i /tmp/ec2_key.pem $USER@$HOST << EOF
+          cd /home/ubuntu/myapp
+          source venv/bin/activate
+          pip install -r requirements.txt  # Asegura que las dependencias estén instaladas
+          sudo systemctl restart flask-app  # Reinicia el servicio Flask (si lo configuraste con systemd)
+        EOF
