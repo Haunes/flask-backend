@@ -1,28 +1,52 @@
-name: Deploy Flask App to EC2
+name: Deploy
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
 
 jobs:
-  deploy:
+  Deploy:
+    name: Deploy to EC2
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Deploy to EC2
-      env:
-        HOST: ${{ secrets.EC2_HOST }}
-        USER: ${{ secrets.EC2_USER }}
-        KEY: ${{ secrets.EC2_KEY }}
-      run: |
-        mkdir -p ~/.ssh
-        echo "$KEY" > /tmp/ec2_key.pem
-        chmod 600 /tmp/ec2_key.pem
-        ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
 
-        # Aquí es donde se agrega la opción -v para aumentar la verbosidad
-        ssh -v -i /tmp/ec2_key.pem $USER@$HOST "echo 'SSH working!'"
+      - name: Deploy to EC2 Instance
+        env:
+          EC2_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_IP: ${{ secrets.SSH_HOST }}
+          EC2_USER: ${{ secrets.USER_NAME }}
+          APP_DIR: /home/ubuntu/aws-prueba
+          APP_FILE: app.py
+          ENVIRONMENT: production
+      
+        run: |
+          echo "$EC2_PRIVATE_KEY" > ec2_key && chmod 600 ec2_key
+          ssh -o StrictHostKeyChecking=no -i ec2_key ${EC2_USER}@${SERVER_IP} '
+
+              # Activar el entorno virtual
+              source venv/bin/activate &&
+
+              # Actualizar el código desde la rama master
+              git fetch --all &&
+              git reset --hard origin/master &&
+              git pull origin master &&
+
+              # Instalar dependencias necesarias
+              pip install -r requirements.txt &&
+
+              # Detener cualquier proceso que esté usando el puerto 5000
+              sudo fuser -k 5000/tcp &&
+
+              # Ejecutar la aplicación Flask en segundo plano en el puerto 5000
+              nohup flask run --host=0.0.0.0 --port=5000 &
+
+              # Desactivar el entorno virtual
+              '
