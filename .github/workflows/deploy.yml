@@ -24,17 +24,19 @@ jobs:
         source venv/bin/activate
         pip install -r requirements.txt
 
-      - name: Deploy to EC2
-        env:
-          HOST: ${{ secrets.EC2_HOST }}
-          USER: ${{ secrets.EC2_USER }}
-          KEY: ${{ secrets.EC2_KEY }}
-        run: |
-          # Guardar la clave en un archivo temporal
-          echo "$KEY" > /tmp/ec2_key.pem
-          chmod 600 /tmp/ec2_key.pem
-          
-          # Usar el archivo temporal para la conexión
-          scp -i /tmp/ec2_key.pem -r * $USER@$HOST:/home/ubuntu/myapp/
-          ssh -i /tmp/ec2_key.pem $USER@$HOST "sudo systemctl restart flask-app"
+    - name: Deploy to EC2
+      env:
+        HOST: ${{ secrets.EC2_HOST }}
+        USER: ${{ secrets.EC2_USER }}
+        KEY: ${{ secrets.EC2_KEY }}
+      run: |
+        # Guardar la clave en un archivo temporal
+        echo "$KEY" > /tmp/ec2_key.pem
+        chmod 600 /tmp/ec2_key.pem
 
+        # Añadir el host a known_hosts
+        ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+
+        # Usar el archivo temporal para la conexión
+        scp -i /tmp/ec2_key.pem -r * $USER@$HOST:/home/ubuntu/myapp/
+        ssh -i /tmp/ec2_key.pem $USER@$HOST "sudo systemctl restart flask-app"
