@@ -30,6 +30,9 @@ jobs:
         USER: ${{ secrets.EC2_USER }}
         KEY: ${{ secrets.EC2_KEY }}
       run: |
+        # Crear la carpeta .ssh si no existe
+        mkdir -p ~/.ssh
+
         # Guardar la clave en un archivo temporal
         echo "$KEY" > /tmp/ec2_key.pem
         chmod 600 /tmp/ec2_key.pem
