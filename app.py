@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 # Configurar la conexión a MySQL
 db = mysql.connector.connect(
-    host="ec2-34-207-71-37.compute-1.amazonaws.com",  # Dirección pública de tu base de datos
+    host="ec2-54-164-187-209.compute-1.amazonaws.com",  # Dirección pública de tu base de datos
     user="myappuser",  # Usuario que creaste
     password="mypassword",  # Contraseña de tu usuario
     database="myappdb"  # Nombre de la base de datos
