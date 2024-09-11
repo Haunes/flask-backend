@@ -16,7 +16,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x'  # Version de Python
+        python-version: '3.x'  # Versión de Python
 
     - name: Install dependencies
       run: |
@@ -40,6 +40,11 @@ jobs:
         # Añadir el host a known_hosts
         ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
 
-        # Usar el archivo temporal para la conexión
+        # Crear el directorio en EC2 si no existe
+        ssh -i /tmp/ec2_key.pem $USER@$HOST "mkdir -p /home/ubuntu/myapp/"
+
+        # Usar el archivo temporal para la conexión y copiar archivos
         scp -i /tmp/ec2_key.pem -r * $USER@$HOST:/home/ubuntu/myapp/
+
+        # Reiniciar la aplicación Flask en EC2
         ssh -i /tmp/ec2_key.pem $USER@$HOST "sudo systemctl restart flask-app"
