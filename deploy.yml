@@ -1,0 +1,35 @@
+name: Deploy Flask App to EC2
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+
+
+    - name: Deploy to EC2
+      env:
+        HOST: ${{ secrets.EC2_HOST }}
+        USER: ${{ secrets.EC2_USER }}
+        KEY: ${{ secrets.EC2_KEY }}
+      run: |
+        scp -i $KEY -r * $USER@$HOST:/home/ubuntu/myapp/
+        ssh -i $KEY $USER@$HOST "sudo systemctl restart flask-app"
