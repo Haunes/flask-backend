@@ -36,5 +36,21 @@ def list_users():
     users = cursor.fetchall()
     return jsonify(users)
 
+# Nueva ruta para autenticación (login)
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    nombres = data['nombres']
+    password = data['password']
+    
+    cursor = db.cursor()
+    cursor.execute("SELECT nombres, password FROM usuarios WHERE nombres = %s", (nombres,))
+    user = cursor.fetchone()
+    
+    if user and user[1] == password:  # Comparar contraseña
+        return jsonify({"message": "Login exitoso"}), 200
+    else:
+        return jsonify({"message": "Nombre o contraseña incorrectos"}), 401
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
