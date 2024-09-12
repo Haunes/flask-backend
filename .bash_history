@@ -38,3 +38,15 @@ sudo kill -9 1192
 python3 app.py 
 ls
 nano app.py 
+ls
+git pull origin master
+nano app.py 
+python3 app.py 
+source venv/bin/activate
+python3 app.py 
+sudo lsof -i :5000
+sudo kill -9 3036
+python3 app.py 
+git add .
+git commit -m "Update app.py"
+git push origin master
