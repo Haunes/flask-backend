@@ -50,3 +50,24 @@ python3 app.py
 git add .
 git commit -m "Update app.py"
 git push origin master
+source venv/bin/activate
+python3 app.py 
+ls
+python3 app.py 
+source venv/bin/activate
+python3 app.py 
+git push origin master
+git add .
+git commit -m "Update app.py"
+git push origin master
+ls
+source venv/bin/activate
+python3 app.py 
+source venv/bin/activate
+python3 app.py 
+git pull origin master 
+python3 app.py 
+source venv/bin/activate
+python3 app.py 
+source venv/bin/activate
+python3 app.py 

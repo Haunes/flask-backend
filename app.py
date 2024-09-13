@@ -7,7 +7,7 @@ CORS(app)  # Habilitar CORS
 
 # Configurar la conexión a MySQL
 db = mysql.connector.connect(
-    host="ec2-44-203-154-177.compute-1.amazonaws.com",  # Dirección pública de tu base de datos
+    host="ec2-54-197-42-133.compute-1.amazonaws.com",  # Dirección pública de tu base de datos
     user="myappuser",  # Usuario que creaste
     password="mypassword",  # Contraseña de tu usuario
     database="myappdb"  # Nombre de la base de datos
